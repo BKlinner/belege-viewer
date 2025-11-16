@@ -1,10 +1,67 @@
 <!doctype html>
-<html>
+<html lang="de">
 <head>
 <meta charset="utf-8">
-<title>Belege</title>
+<title>Beleganzeige</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    h1 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    .feld {
+        margin-bottom: 6px;
+        padding: 6px;
+        border-bottom: 1px solid #ccc;
+    }
+    .label {
+        font-weight: bold;
+        color: #333;
+    }
+</style>
 </head>
+
 <body>
-Test
+
+<h1>Belegdetails</h1>
+<div id="ausgabe">Lade Daten…</div>
+
+<script>
+// Query-Parameter ?id=000001 lesen
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+// JSON laden
+fetch("belege.json")
+    .then(r => r.json())
+    .then(daten => {
+        if (!daten[id]) {
+            document.getElementById("ausgabe").innerHTML =
+                "<p>Kein Eintrag für ID " + id + " gefunden.</p>";
+            return;
+        }
+
+        const beleg = daten[id];
+
+        // HTML bauen
+        let html = "";
+        for (const key in beleg) {
+            html += `<div class="feld">
+                        <span class="label">${key}:</span> 
+                        ${beleg[key]}
+                    </div>`;
+        }
+
+        document.getElementById("ausgabe").innerHTML = html;
+    })
+    .catch(err => {
+        document.getElementById("ausgabe").innerHTML =
+            "<p>Fehler beim Laden der Daten.</p>";
+    });
+</script>
+
 </body>
 </html>
